@@ -3,7 +3,7 @@ __author__ = 'Kelsey Gilmore-Innis'
 import unittest
 from set_one import challenge_one
 
-class Set1Tests(unittest.TestCase):
+class SetOneTests(unittest.TestCase):
 
     def test_convert_to_base64_nonhex(self):
         self.assertRaises(ValueError, challenge_one.convert_to_base64, "this is not a hex string")
