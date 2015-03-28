@@ -19,9 +19,10 @@ def frequency_score(text):
     n = lower_text.count('n')
     return space + e + t + a + o + i + n
 
-def decrypt_single_byte(hex_input):
-    candidates = [(single_byte_xor(hex_input, byte).decode("utf-8"), byte) for byte in range(128)]
+def detect_single_byte_xor_key(hex_input):
+    candidates = [(single_byte_xor(hex_input, byte).decode("latin1"), byte) for byte in range(128)]
     scored_candidates = [(candidate, frequency_score(candidate), byte) for (candidate, byte) in candidates]
-    winner = sorted(scored_candidates, key=lambda candidate: candidate[1], reverse=True)[0]
-    return winner[2]
+    return sorted(scored_candidates, key=lambda candidate: candidate[1], reverse=True)[0]
 
+def decrypt_single_byte_xor(hex_input):
+    return detect_single_byte_xor_key(hex_input)[0]

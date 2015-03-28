@@ -1,7 +1,7 @@
 __author__ = 'Kelsey Gilmore-Innis'
 
 import unittest
-from set1 import challenge1, challenge2, challenge3
+from set1 import challenge1, challenge2, challenge3, challenge4
 
 class SetOneTests(unittest.TestCase):
 
@@ -31,8 +31,11 @@ class SetOneTests(unittest.TestCase):
 
     def test_decrypt_single_byte(self):
         self.assertEqual(
-            challenge3.decrypt_single_byte("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"),
-            88)
+            challenge3.decrypt_single_byte_xor("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"),
+            "Cooking MC's like a pound of bacon")
+
+    def test_detect_single_byte_xor(self):
+        self.assertEqual(challenge4.detect_single_byte_xor(), "Now that the party is jumping\n")
 
 if __name__ == '__main__':
     unittest.main()
