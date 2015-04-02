@@ -26,53 +26,62 @@ class SetOneTests(unittest.TestCase):
 
     def test_single_byte_xor(self):
         self.assertEqual(
-            challenge3.single_byte_xor("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736", 88),
-                                        b"Cooking MC\'s like a pound of bacon")
+            challenge3.single_byte_xor(bytes.fromhex("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"),
+                                       88), b"Cooking MC\'s like a pound of bacon")
 
     def test_decrypt_single_byte(self):
         self.assertEqual(
             challenge3.decrypt_single_byte_xor("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"),
-            "Cooking MC's like a pound of bacon")
+            b"Cooking MC's like a pound of bacon")
 
     def test_detect_single_byte_xor(self):
-        self.assertEqual(challenge4.detect_single_byte_xor(), "Now that the party is jumping\n")
+        self.assertEqual(challenge4.detect_single_byte_xor(), b"Now that the party is jumping\n")
 
     def test_repeating_key_xor(self):
         import binascii
         encrypted = challenge5.encrypt_repeating_key("""Burning 'em, if you ain't quick and nimble
-I go crazy when I hear a cymbal""".encode("latin1"), "ICE")
+I go crazy when I hear a cymbal""".encode("ascii"), "ICE")
         self.assertEqual(binascii.hexlify(encrypted),
             b'0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f')
 
     def test_roundtrip_repeating_key(self):
         original = """Burning 'em, if you ain't quick and nimble
 I go crazy when I hear a cymbal"""
-        encrypted = challenge5.encrypt_repeating_key(original.encode("latin1"), "ICE")
+        encrypted = challenge5.encrypt_repeating_key(original.encode("ascii"), "ICE")
         decrypted = challenge5.encrypt_repeating_key(encrypted, "ICE")
-        self.assertEqual(original, decrypted.decode("latin1"))
+        self.assertEqual(original, decrypted.decode("ascii"))
+
+    def __with_file(self, filename, function):
+        import os
+        fn = os.path.join(os.path.dirname(__file__), 'resources', filename)
+        with open(fn) as f:
+            return function(f)
+
+    def __with_article(self, function):
+        return self.__with_file('challenge6_test.txt', function)
 
     def test_roundtrip_repeating_key_file(self):
-        import os
-        fn = os.path.join(os.path.dirname(__file__), 'resources', 'challenge6_test.txt')
-        with open(fn) as f:
+        def roundtrip(f):
            original = f.read()
-           encrypted = challenge5.encrypt_repeating_key(original.encode("latin1"), "STOP")
+           encrypted = challenge5.encrypt_repeating_key(original.encode("ascii"), "STOP")
            decrypted = challenge5.encrypt_repeating_key(encrypted, "STOP")
-           self.assertEqual(original, decrypted.decode("latin1"))
+           self.assertEqual(original, decrypted.decode("ascii"))
+        self.__with_article(roundtrip)
 
     def test_hamming_distance(self):
-        self.assertEqual(challenge6.hamming_distance("this is a test".encode('latin1'), "wokka wokka!!!".encode('latin1')), 37)
+        self.assertEqual(challenge6.hamming_distance("this is a test".encode('ascii'), "wokka wokka!!!".encode('ascii')),
+                         37)
 
     def test_find_key_size_short(self):
         encrypted = b'0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f'
         self.assertEqual(challenge6.find_key_size(encrypted) % 3, 0)
 
+    def encrypt_file(self, key):
+        return self.__with_article(lambda f: challenge5.encrypt_repeating_key(f.read().encode("ascii"), key))
+
     def generate_key_size_test(self, key):
-        import os
-        fn = os.path.join(os.path.dirname(__file__), 'resources', 'challenge6_test.txt')
-        with open(fn) as f:
-            encrypted = challenge5.encrypt_repeating_key(f.read().encode("latin1"), key)
-            self.assertEqual(challenge6.find_key_size(encrypted) % len(key), 0)
+        encrypted = self.encrypt_file(key)
+        self.assertEqual(challenge6.find_key_size(encrypted) % len(key), 0)
 
     def test_find_key_size_1(self):
         self.generate_key_size_test("STOP")
@@ -82,6 +91,26 @@ I go crazy when I hear a cymbal"""
 
     def test_find_key_size_3(self):
         self.generate_key_size_test("LISTEN")
+
+    def generate_detect_repeating_xor_key_test(self, key):
+        def break_xor(f):
+           original = f.read()
+           encrypted = challenge5.encrypt_repeating_key(original.encode("ascii"), key)
+           decrypted = challenge6.break_repeating_xor_bytes(encrypted)
+           self.assertEqual(original, decrypted.decode("ascii"))
+        self.__with_article(break_xor)
+
+    def test_break_repeating_xor_1(self):
+        self.generate_detect_repeating_xor_key_test("vanwinkle")
+
+    def test_break_repeating_xor_2(self):
+        self.generate_detect_repeating_xor_key_test("BaBy")
+
+    def test_repeating_xor_challenge(self):
+        challenge6.break_repeating_xor()
+        self.maxDiff = None
+        self.assertEqual(challenge6.break_repeating_xor(), self.__with_file('challenge6_answer.txt',
+                                                                            lambda f: f.read().encode("ascii")))
 
 
 
