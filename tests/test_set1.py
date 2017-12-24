@@ -13,6 +13,7 @@ class Challenge1(unittest.TestCase):
             "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"),
             b'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t')
 
+
 class Challenge2(unittest.TestCase):
 
     def test_xor_nonhex(self):
@@ -31,8 +32,10 @@ class Challenge3(unittest.TestCase):
 
     def test_single_byte_xor(self):
         self.assertEqual(
-            challenge3.single_byte_xor(bytes.fromhex("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"),
-                                       88), b"Cooking MC\'s like a pound of bacon")
+            challenge3.single_byte_xor(
+                bytes.fromhex("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"),
+                88),
+            b"Cooking MC\'s like a pound of bacon")
 
     def test_decrypt_single_byte(self):
         self.assertEqual(
@@ -51,7 +54,8 @@ class Challenge5(unittest.TestCase):
         import binascii
         encrypted = challenge5.encrypt_repeating_key("""Burning 'em, if you ain't quick and nimble
 I go crazy when I hear a cymbal""".encode("ascii"), "ICE")
-        self.assertEqual(binascii.hexlify(encrypted),
+        self.assertEqual(
+            binascii.hexlify(encrypted),
             b'0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f')
 
     def test_roundtrip_repeating_key(self):
@@ -75,15 +79,18 @@ class Challenge6(unittest.TestCase):
 
     def test_roundtrip_repeating_key_file(self):
         def roundtrip(f):
-           original = f.read()
-           encrypted = challenge5.encrypt_repeating_key(original.encode("ascii"), "STOP")
-           decrypted = challenge5.encrypt_repeating_key(encrypted, "STOP")
-           self.assertEqual(original, decrypted.decode("ascii"))
+            original = f.read()
+            encrypted = challenge5.encrypt_repeating_key(original.encode("ascii"), "STOP")
+            decrypted = challenge5.encrypt_repeating_key(encrypted, "STOP")
+            self.assertEqual(original, decrypted.decode("ascii"))
         self.__with_article(roundtrip)
 
     def test_hamming_distance(self):
-        self.assertEqual(challenge6.hamming_distance("this is a test".encode('ascii'), "wokka wokka!!!".encode('ascii')),
-                         37)
+        self.assertEqual(
+            challenge6.hamming_distance(
+                "this is a test".encode('ascii'),
+                "wokka wokka!!!".encode('ascii')),
+            37)
 
     def test_find_key_size_short(self):
         encrypted = b'0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f'
@@ -107,10 +114,10 @@ class Challenge6(unittest.TestCase):
 
     def generate_detect_repeating_xor_key_test(self, key):
         def break_xor(f):
-           original = f.read()
-           encrypted = challenge5.encrypt_repeating_key(original.encode("ascii"), key)
-           decrypted = challenge6.break_repeating_xor_bytes(encrypted)
-           self.assertEqual(original, decrypted.decode("ascii"))
+            original = f.read()
+            encrypted = challenge5.encrypt_repeating_key(original.encode("ascii"), key)
+            decrypted = challenge6.break_repeating_xor_bytes(encrypted)
+            self.assertEqual(original, decrypted.decode("ascii"))
         self.__with_article(break_xor)
 
     def test_break_repeating_xor_1(self):
@@ -124,7 +131,6 @@ class Challenge6(unittest.TestCase):
         self.maxDiff = None
         self.assertEqual(challenge6.break_repeating_xor(), self.__with_file('challenge6_answer.txt',
                                                                             lambda f: f.read().encode("ascii")))
-
 
 
 if __name__ == '__main__':

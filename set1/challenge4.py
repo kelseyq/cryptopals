@@ -2,6 +2,7 @@ __author__ = 'Kelsey Gilmore-Innis'
 
 from set1 import challenge3
 
+
 def detect_single_byte_xor():
     import os
     fn = os.path.join(os.path.dirname(__file__), 'resources', 'challenge4.txt')

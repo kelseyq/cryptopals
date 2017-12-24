@@ -2,6 +2,7 @@ __author__ = 'Kelsey Gilmore-Innis'
 
 from set1 import challenge2
 
+
 def encrypt_repeating_key(input_bytes, key):
     import math
     repeats = math.ceil(len(input_bytes) / len(key))
