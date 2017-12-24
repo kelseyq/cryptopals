@@ -1,5 +1,3 @@
-__author__ = 'Kelsey Gilmore-Innis'
-
 from set1 import challenge2
 
 

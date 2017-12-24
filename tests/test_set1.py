@@ -1,5 +1,3 @@
-__author__ = 'Kelsey Gilmore-Innis'
-
 import unittest
 from set1 import challenge1, challenge2, challenge3, challenge4, challenge5, challenge6
 

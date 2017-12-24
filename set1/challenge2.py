@@ -1,4 +1,3 @@
-__author__ = 'Kelsey Gilmore-Innis'
 
 
 def fixed_xor_bytes(input_one_bytes, input_two_bytes):
