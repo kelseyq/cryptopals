@@ -1,5 +1,5 @@
 import unittest
-from set1 import challenge1, challenge2, challenge3, challenge4, challenge5, challenge6, challenge7
+from set1 import challenge1, challenge2, challenge3, challenge4, challenge5, challenge6, challenge7, challenge8
 
 
 class Set1TestCase(unittest.TestCase):
@@ -139,6 +139,13 @@ class Challenge7(Set1TestCase):
         self.maxDiff = None
         self.assertEqual(challenge7.decrypt_aes_in_ecb_challenge(), self.with_file('challenge7_answer.txt',
                                                                                    lambda f: f.read().encode("ascii")))
+
+
+class Challenge8(Set1TestCase):
+
+    def test_detect_aes_in_ecb_challenge(self):
+        self.maxDiff = None
+        self.assertEqual(challenge8.detect_aes_in_ecb_challenge(), 'test')
 
 
 if __name__ == '__main__':
