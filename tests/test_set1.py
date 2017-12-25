@@ -136,7 +136,8 @@ class Challenge6(Set1TestCase):
 class Challenge7(Set1TestCase):
 
     def test_aes_in_ecb_challenge(self):
-        self.assertEqual(challenge7.decrypt_aes_in_cbc_challenge(), self.with_file('challenge7_answer.txt',
+        self.maxDiff = None
+        self.assertEqual(challenge7.decrypt_aes_in_ecb_challenge(), self.with_file('challenge7_answer.txt',
                                                                                    lambda f: f.read().encode("ascii")))
 
 
